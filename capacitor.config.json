@@ -1,0 +1,6 @@
+{
+  "appId": "pe.huebito.app",
+  "appName": "Huebito",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

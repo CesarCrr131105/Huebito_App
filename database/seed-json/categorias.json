@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "nombre": "Desayunos",
+    "slug": "desayunos"
+  },
+  {
+    "id": 2,
+    "nombre": "Almuerzos",
+    "slug": "almuerzos"
+  }
+]

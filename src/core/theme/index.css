@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    overscroll-behavior-y: none;
+  }
+
+  body {
+    @apply bg-surface text-on-surface font-body antialiased;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* El texto de la receta (nombre, descripción, ingredientes, pasos) sí se
+     puede seleccionar/copiar; el resto de la interfaz (botones, chrome de
+     la app) no, para que se sienta como una app nativa. */
+  .receta-texto,
+  .receta-texto * {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+}
+
+@keyframes ruleta-fall {
+  0% { transform: translateY(0); opacity: 0; }
+  8% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateY(var(--fall-distance, 260px)); opacity: 0; }
+}
+
+@layer utilities {
+  .bg-surface { background-color: #FBF7F2; }
+  .dark .bg-surface { background-color: #292A2D; }
+  
+  .bg-surface-container { background-color: #FFFFFF; }
+  .dark .bg-surface-container { background-color: #231717; }
+  
+  .text-on-surface { color: #231717; }
+  .dark .text-on-surface { color: #FFFFFF; }
+  
+  .text-on-surface-variant { color: #756F68; }
+  .dark .text-on-surface-variant { color: #5F6062; }
+  
+  .border-outline { border-color: #E3DCD3; }
+  .dark .border-outline { border-color: #404249; }
+
+  /* Respetan el notch/isla y las barras de gesto en Android/iOS cuando la
+     app corre empaquetada (env() cae a 0px en un navegador normal). */
+  .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+  .min-h-screen-safe {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+}
