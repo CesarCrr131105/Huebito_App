@@ -3,10 +3,7 @@ import { useTheme } from '../theme/ThemeProvider';
 import { CategoriaSlug } from '../../features/recipes/domain/entities/categoria';
 
 export function CategoryTabs({ value, onChanged }) {
-  const tabs = [
-    { slug: CategoriaSlug.desayunos, label: 'Desayunos' },
-    { slug: CategoriaSlug.almuerzos, label: 'Almuerzos' },
-  ];
+  const tabs = CategoriaSlug.values.map((slug) => ({ slug, label: CategoriaSlug.labels[slug] }));
 
   return (
     <div className="flex gap-6">

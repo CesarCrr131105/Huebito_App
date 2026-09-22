@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../../../core/theme/ThemeProvider';
 import { AppTopBar } from '../../../../core/widgets/AppTopBar';
 import { AppPrimaryButton } from '../../../../core/widgets/AppPrimaryButton';
-import { RuletaWheel } from '../widgets/RuletaWheel';
+import { RuletaWheel, SEGMENTOS_RULETA } from '../widgets/RuletaWheel';
 import { useRecetasPorCategoria, useRecetaAleatoria } from '../../../recipes/presentation/providers/useRecetas';
 import { CategoriaSlug } from '../../../recipes/domain/entities/categoria';
 import { AppRoutes } from '../../../../core/router/appRoutes';
@@ -15,7 +15,7 @@ export function RuletaScreen() {
   const { colors } = useTheme();
 
   const categoria = CategoriaSlug.fromStorage(categoriaParam) || CategoriaSlug.desayunos;
-  const titulo = categoria === CategoriaSlug.desayunos ? '¿Qué desayuno hoy?' : '¿Qué almuerzo hoy?';
+  const titulo = CategoriaSlug.preguntas[categoria];
 
   const { recetas, loading: loadingRecetas, error } = useRecetasPorCategoria(categoria);
   const { girar, loading: spinning } = useRecetaAleatoria();
@@ -35,9 +35,13 @@ export function RuletaScreen() {
       return;
     }
 
+    // La rueda tiene SEGMENTOS_RULETA gajos, no uno por receta, así que el
+    // ganador se mapea al gajo que le toca por módulo. El puntero siempre cae
+    // sobre un gajo real y la receta mostrada es la que salió del sorteo.
     const indiceEncontrado = recetas.findIndex((r) => r.id === ganador.id);
-    const segmentIndex = indiceEncontrado === -1 ? 0 : indiceEncontrado;
-    const sweep = (2 * Math.PI) / recetas.length;
+    const segmentos = Math.min(Math.max(recetas.length, 2), SEGMENTOS_RULETA);
+    const segmentIndex = (indiceEncontrado === -1 ? 0 : indiceEncontrado) % segmentos;
+    const sweep = (2 * Math.PI) / segmentos;
     const anguloSegmento = (segmentIndex + 0.5) * sweep;
 
     const TWO_PI = 2 * Math.PI;

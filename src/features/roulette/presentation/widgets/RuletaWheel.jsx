@@ -2,6 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useTheme } from '../../../../core/theme/ThemeProvider';
 import { RuletaPreviewCards } from './RuletaPreviewCards';
 
+// La rueda dibuja un número fijo de gajos, no uno por receta: con 150 recetas
+// por categoría los gajos quedarían como hilos ilegibles. El sorteo sigue
+// siendo sobre TODAS las recetas; la rueda solo representa el giro, y el
+// ganador se mapea a un gajo con el módulo de este número.
+export const SEGMENTOS_RULETA = 12;
+
 function calcularLayoutRueda() {
   if (typeof window === 'undefined') return { size: 220, margin: 60 };
   const disponible = window.innerWidth - 40; // aprox. padding lateral de la pantalla (px-5 a cada lado)
@@ -29,7 +35,7 @@ function useResponsiveLayout(sizeProp) {
 export function RuletaWheel({ recetas = [], segmentCount, rotation, size: sizeProp }) {
   const { colors } = useTheme();
   const { size, margin } = useResponsiveLayout(sizeProp);
-  const count = Math.max(recetas.length || segmentCount || 0, 2);
+  const count = Math.min(Math.max(recetas.length || segmentCount || 0, 2), SEGMENTOS_RULETA);
   const sweep = (2 * Math.PI) / count;
 
   return (

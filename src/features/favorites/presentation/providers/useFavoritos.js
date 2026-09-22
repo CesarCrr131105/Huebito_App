@@ -1,9 +1,8 @@
 import { useCallback, useState, useEffect } from 'react';
-import { RecetasRepositoryImpl } from '../../../recipes/data/repositories/recetaRepositoryImpl.js';
+import { recetasRepository as repository } from '../../../recipes/data/repositories/recetasRepositoryInstance.js';
 import { GetRecetaPorIdUseCase } from '../../../recipes/domain/usecases/getRecetaPorIdUseCase.js';
 
 const FAVORITES_KEY = 'huebito_favorites';
-const repository = new RecetasRepositoryImpl();
 const getRecetaPorIdUC = new GetRecetaPorIdUseCase(repository);
 
 function readFavorites() {

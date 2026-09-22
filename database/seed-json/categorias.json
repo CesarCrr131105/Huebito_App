@@ -8,5 +8,10 @@
     "id": 2,
     "nombre": "Almuerzos",
     "slug": "almuerzos"
+  },
+  {
+    "id": 3,
+    "nombre": "Bebidas",
+    "slug": "bebidas"
   }
 ]

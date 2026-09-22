@@ -6,6 +6,7 @@ import { AppIconButton } from '../../../../core/widgets/AppIconButton';
 import { AppPrimaryButton, AppButtonVariant } from '../../../../core/widgets/AppPrimaryButton';
 import { StatBlock } from '../../../../core/widgets/StatBlock';
 import { RecipeImagePlaceholder } from '../../../../core/widgets/RecipeImagePlaceholder';
+import { CreditoImagen } from '../../../../core/widgets/CreditoImagen';
 import { RecetaVideoSection } from '../../../../core/widgets/RecetaVideoSection';
 import { useFavoritos } from '../../../favorites/presentation/providers/useFavoritos';
 import { useHistorial } from '../../../history/presentation/providers/useHistorial';
@@ -53,8 +54,13 @@ export function RecetaDetailScreen({ receta: propReceta, mostrarVolverAGirar = f
         }}
       >
         <div className="w-full aspect-[1.3] rounded-[20px] overflow-hidden">
-          <RecipeImagePlaceholder categoria={receta.categoriaSlug} imagenAsset={receta.imagenAsset} />
+          <RecipeImagePlaceholder categoria={receta.categoriaSlug} imagenUrl={receta.imagenUrl} />
         </div>
+        <CreditoImagen
+          autor={receta.imagenAutor}
+          licencia={receta.imagenLicencia}
+          fuente={receta.imagenFuente}
+        />
 
         <div className="receta-texto">
           <h1 className="mt-6 text-[27px] font-bold font-display text-on-surface">{receta.nombre}</h1>

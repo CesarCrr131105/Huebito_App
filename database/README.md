@@ -118,3 +118,63 @@ await sql`SELECT setval('recetas_id_seq', (SELECT MAX(id) FROM recetas))`;
 
 En el SQL Editor de Neon: `SELECT count(*) FROM categorias;` debe dar 2,
 y `SELECT count(*) FROM recetas;` debe dar 38.
+
+---
+
+## Imágenes de las recetas
+
+Las fotos se guardan **dentro de la base**, no en disco ni en un CDN. La
+migración `migracion-imagenes.sql` agrega estas columnas a `recetas`:
+
+| columna | para qué |
+|---|---|
+| `imagen_datos` | el binario WebP ya redimensionado (`BYTEA`) |
+| `imagen_mime` | `image/webp` |
+| `imagen_ancho` / `imagen_alto` | 600 × 450 |
+| `imagen_bytes` | tamaño; el front lo usa para saber si hay foto |
+| `imagen_fuente` | URL de la página de origen |
+| `imagen_autor` | **requerido** por CC BY y CC BY-SA |
+| `imagen_licencia` | `CC BY-SA 4.0`, `by-nc`, `Public domain`, … |
+| `imagen_query` | con qué término se encontró (para depurar) |
+
+Son nullable: no toda receta consigue una foto con licencia usable, y en ese
+caso la app cae en el ícono de la categoría.
+
+### Cómo se llenan
+
+```bash
+node database/imagenes/buscarImagenes.mjs              # solo las que faltan
+node database/imagenes/buscarImagenes.mjs --dry        # sin escribir en la BD
+node database/imagenes/buscarImagenes.mjs --limit 20   # prueba corta
+node database/imagenes/buscarImagenes.mjs --categoria bebidas
+node database/imagenes/buscarImagenes.mjs --rehacer    # reprocesa las que ya tienen
+```
+
+Es reanudable: salta las recetas que ya tienen `imagen_datos`, así que se
+puede cortar y volver a lanzar sin perder trabajo.
+
+### Licencias — leer antes de publicar
+
+Las fuentes son Wikimedia Commons y Openverse, y **solo** se aceptan licencias
+que permitan obras derivadas, porque redimensionar la foto es crear una:
+
+- Se aceptan: CC0, dominio público, CC BY, CC BY-SA, CC BY-NC, CC BY-NC-SA.
+- Se rechaza: cualquier licencia **ND** (NoDerivatives).
+
+Dos consecuencias prácticas:
+
+1. **Atribución obligatoria.** CC BY y CC BY-SA exigen acreditar al autor. Por
+   eso la pantalla de detalle muestra el crédito (`CreditoImagen.jsx`). Si se
+   quita ese componente, se incumple la licencia.
+2. **Las fotos NC bloquean el uso comercial.** Si en algún momento la app se
+   monetiza, hay que reemplazarlas. Para listarlas:
+
+   ```sql
+   SELECT id, nombre, imagen_licencia FROM recetas
+    WHERE imagen_licencia ILIKE '%nc%' ORDER BY nombre;
+   ```
+
+### Cuidado con `--reset`
+
+`seed-neon.mjs --reset` borra las filas y con ellas las imágenes. Sin
+`--reset`, el upsert no toca las columnas `imagen_*` y las fotos se conservan.

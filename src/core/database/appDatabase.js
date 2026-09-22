@@ -2,7 +2,7 @@ import { DbTables, DbSeparators } from './dbConstants.js';
 import { categoriasSeedData } from './seed/categoriasSeedData.js';
 import { recetasSeedData } from './seed/recetasSeedData.js';
 
-const DB_KEY = 'huebito_db_v1';
+const DB_KEY = 'huebito_db_v3';
 
 class AppDatabase {
   constructor() {

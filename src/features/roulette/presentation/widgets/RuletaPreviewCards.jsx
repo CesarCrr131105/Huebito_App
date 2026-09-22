@@ -86,7 +86,7 @@ export function RuletaPreviewCards({ recetas = [], size = 220, margin = 60 }) {
             >
               <RecipeImagePlaceholder
                 categoria={receta?.categoriaSlug}
-                imagenAsset={receta?.imagenAsset}
+                imagenUrl={receta?.imagenUrl}
                 borderRadius="0px"
               />
             </div>

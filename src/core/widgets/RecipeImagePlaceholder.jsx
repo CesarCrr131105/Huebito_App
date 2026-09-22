@@ -1,21 +1,26 @@
 import React, { useState } from 'react';
 import { useTheme } from '../theme/ThemeProvider';
-import { Coffee, UtensilsCrossed } from 'lucide-react';
+import { Coffee, UtensilsCrossed, CupSoda } from 'lucide-react';
 import { CategoriaSlug } from '../../features/recipes/domain/entities/categoria';
 
-// Muestra la foto real de la receta (imagenAsset) cuando exista; si no viene,
-// o si falla la carga, cae automáticamente en el ícono ilustrativo. Así queda
-// lista para cuando se agreguen las fotos reales: solo hay que completar
-// imagenAsset en los datos, sin tocar los componentes que la usan.
-export function RecipeImagePlaceholder({ categoria, imagenAsset, borderRadius = '20px' }) {
+// Muestra la foto real de la receta cuando exista; si no viene, o si falla la
+// carga, cae automáticamente en el ícono ilustrativo de la categoría.
+// imagenUrl puede ser una ruta local o la URL del endpoint del backend que
+// sirve el binario guardado en Neon: al widget le da igual cuál de las dos.
+export function RecipeImagePlaceholder({ categoria, imagenUrl, borderRadius = '20px' }) {
   const { colors } = useTheme();
   const [imgError, setImgError] = useState(false);
-  const Icon = categoria === CategoriaSlug.desayunos ? Coffee : UtensilsCrossed;
+  const iconosPorCategoria = {
+    [CategoriaSlug.desayunos]: Coffee,
+    [CategoriaSlug.almuerzos]: UtensilsCrossed,
+    [CategoriaSlug.bebidas]: CupSoda,
+  };
+  const Icon = iconosPorCategoria[categoria] || UtensilsCrossed;
 
-  if (imagenAsset && !imgError) {
+  if (imagenUrl && !imgError) {
     return (
       <img
-        src={imagenAsset}
+        src={imagenUrl}
         alt=""
         className="w-full h-full object-cover block"
         style={{ borderRadius }}

@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { RecetasRepositoryImpl } from '../../data/repositories/recetaRepositoryImpl.js';
+import { recetasRepository as repository } from '../../data/repositories/recetasRepositoryInstance.js';
 import { GetCategoriasUseCase } from '../../domain/usecases/getCategoriasUseCase.js';
 import { GetRecetasPorCategoriaUseCase } from '../../domain/usecases/getRecetasPorCategoriaUseCase.js';
 import { GetRecetaPorIdUseCase } from '../../domain/usecases/getRecetaPorIdUseCase.js';
 import { GetRecetaAleatoriaUseCase } from '../../domain/usecases/getRecetaAleatoriaUseCase.js';
 
-const repository = new RecetasRepositoryImpl();
 const getCategoriasUC = new GetCategoriasUseCase(repository);
 const getRecetasPorCategoriaUC = new GetRecetasPorCategoriaUseCase(repository);
 const getRecetaPorIdUC = new GetRecetaPorIdUseCase(repository);

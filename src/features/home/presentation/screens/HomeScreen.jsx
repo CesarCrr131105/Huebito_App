@@ -9,7 +9,13 @@ import { useFavoritos } from '../../../favorites/presentation/providers/useFavor
 import { useHistorial } from '../../../history/presentation/providers/useHistorial';
 import { CategoriaSlug } from '../../../recipes/domain/entities/categoria';
 import { AppRoutes } from '../../../../core/router/appRoutes';
-import { Dices, LogOut, Coffee, UtensilsCrossed } from 'lucide-react';
+import { Dices, LogOut, Coffee, UtensilsCrossed, CupSoda } from 'lucide-react';
+
+const iconosPorCategoria = {
+  [CategoriaSlug.desayunos]: Coffee,
+  [CategoriaSlug.almuerzos]: UtensilsCrossed,
+  [CategoriaSlug.bebidas]: CupSoda,
+};
 
 export function HomeScreen() {
   const navigate = useNavigate();
@@ -41,29 +47,29 @@ export function HomeScreen() {
           label="Sorpréndeme"
           icon={Dices}
           onPressed={() => {
-            const cat = Math.random() > 0.5 ? CategoriaSlug.desayunos : CategoriaSlug.almuerzos;
+            const cat = CategoriaSlug.values[Math.floor(Math.random() * CategoriaSlug.values.length)];
             navigate(AppRoutes.roulette(cat));
           }}
         />
       </div>
 
-      <div className="px-5 mt-6 grid grid-cols-2 gap-4">
-        <button
-          onClick={() => navigate(AppRoutes.roulette(CategoriaSlug.desayunos))}
-          className="flex flex-col items-center py-5 rounded-[20px]"
-          style={{ backgroundColor: colors.surfaceContainer }}
-        >
-          <Coffee size={32} style={{ color: colors.primary }} />
-          <span className="mt-2 text-[16px] font-medium font-body text-on-surface">Desayunos</span>
-        </button>
-        <button
-          onClick={() => navigate(AppRoutes.roulette(CategoriaSlug.almuerzos))}
-          className="flex flex-col items-center py-5 rounded-[20px]"
-          style={{ backgroundColor: colors.surfaceContainer }}
-        >
-          <UtensilsCrossed size={32} style={{ color: colors.primary }} />
-          <span className="mt-2 text-[16px] font-medium font-body text-on-surface">Almuerzos</span>
-        </button>
+      <div className="px-5 mt-6 grid grid-cols-3 gap-3">
+        {CategoriaSlug.values.map((slug) => {
+          const Icon = iconosPorCategoria[slug];
+          return (
+            <button
+              key={slug}
+              onClick={() => navigate(AppRoutes.roulette(slug))}
+              className="flex flex-col items-center py-5 rounded-[20px]"
+              style={{ backgroundColor: colors.surfaceContainer }}
+            >
+              <Icon size={28} style={{ color: colors.primary }} />
+              <span className="mt-2 text-[14px] font-medium font-body text-on-surface">
+                {CategoriaSlug.labels[slug]}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       <Section
