@@ -115,6 +115,16 @@ function puntaje(nombreReceta, tituloArchivo) {
 // sin esta comprobación se colaría esa foto.
 const PISTA_PERUANA = /per[uú]|peruvian|andean|andino|cusco|cuzco|lima|arequipa|inca|latin america/i;
 
+// El nombre del plato puede coincidir con un lugar, un producto envasado o una
+// planta. Casos reales que se colaron: "Chancay" trajo una foto de la calle de
+// la ciudad de Chancay (es pan y es ciudad), "Estofado de Res" la etiqueta de
+// una lata, y "Jugo de pera" una rama con frutos.
+const NO_ES_COMIDA = /(calle|calles|street|streets|plaza|avenida|jir[oó]n|ciudad|distrito|provincia|puerto|iglesia|edificio|building|vista|panor[aá]mica|mapa|map|escudo|bandera|flag|logo|letrero|se[nñ]al|lata|can|tin|envase|package|packaging|etiqueta|label|producto|brand|supermercado|tienda|shop|arbol|[aá]rbol|tree|planta|plant|flor|flower|hoja|leaf|semilla|seed|retrato|portrait|iglesia|cementerio|estacion|station|puente|bridge)/i;
+
+// Señal de que el archivo sí retrata comida o bebida. Commons categoriza muy
+// bien los alimentos, así que cuando hay categorías se puede exigir esto.
+const ES_COMIDA = /(food|foods|cuisine|dish|dishes|comida|plato|platos|gastronom|drink|drinks|beverage|beverages|bebida|bebidas|juice|jugo|soup|sopa|bread|pan(es)?|dessert|postre|meat|carne|seafood|marisco|restaurant|cooking|cocina|recipe|receta|breakfast|desayuno|lunch|almuerzo|snack|cake|pastry|panaderia|cocktail|coctel|tea|te|cafe|coffee)/i;
+
 function pareceDeLibro(titulo) {
   // Los escaneos del Internet Archive vienen como "(IA nombre-del-libro)" y
   // contaminan cualquier búsqueda de texto en Commons.
@@ -182,6 +192,12 @@ function elegirCandidato(fraseObjetivo, candidatos) {
     .filter((c) => c.urlDescarga && !urlsUsadas.has(c.urlDescarga) && !urlsUsadas.has(c.urlPagina) && licenciaUsable(c.licencia))
     .filter((c) => c.fuenteApi === 'openverse' || EXT_VALIDA.test(c.titulo))
     .filter((c) => !pareceDeLibro(c.titulo))
+    // Descarta lugares, productos envasados y plantas que comparten nombre
+    // con el plato.
+    .filter((c) => !NO_ES_COMIDA.test(c.titulo))
+    // Si la fuente aporta categorías o tags, exigimos que digan que es comida.
+    // Openverse a veces no trae tags: ahí no se puede pedir la señal.
+    .filter((c) => !c.contexto || c.contexto === c.titulo || ES_COMIDA.test(c.contexto))
     .map((c) => ({ ...c, score: puntaje(fraseObjetivo, c.titulo), peruano: PISTA_PERUANA.test(c.contexto) }))
     // El score es qué proporción del título ocupa el nombre del plato. Un
     // valor bajo significa que el plato es un detalle menor dentro de una foto
@@ -396,10 +412,12 @@ try {
           `UPDATE recetas SET
              imagen_datos = $1, imagen_mime = 'image/webp',
              imagen_ancho = $2, imagen_alto = $3, imagen_bytes = $4,
-             imagen_fuente = $5, imagen_autor = $6, imagen_licencia = $7, imagen_query = $8
-           WHERE id = $9`,
+             imagen_fuente = $5, imagen_autor = $6, imagen_licencia = $7, imagen_query = $8,
+             imagen_titulo = $9
+           WHERE id = $10`,
           [img.buffer, img.ancho, img.alto, img.buffer.length,
-           elegido.urlPagina, elegido.autor?.slice(0, 300) || null, elegido.licencia, elegido.query, receta.id]
+           elegido.urlPagina, elegido.autor?.slice(0, 300) || null, elegido.licencia, elegido.query,
+           elegido.titulo?.slice(0, 300) || null, receta.id]
         );
       }
 

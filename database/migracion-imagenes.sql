@@ -16,3 +16,7 @@ ALTER TABLE recetas
 -- Índice parcial para poder listar rápido qué recetas ya tienen imagen.
 CREATE INDEX IF NOT EXISTS idx_recetas_con_imagen
   ON recetas ((imagen_datos IS NOT NULL));
+
+-- Título del archivo elegido. Permite auditar después si la foto corresponde
+-- al plato, sin tener que volver a consultar la API de origen.
+ALTER TABLE recetas ADD COLUMN IF NOT EXISTS imagen_titulo TEXT;
