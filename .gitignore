@@ -1,0 +1,26 @@
+# Dependencias e artefactos de build: se regeneran con npm install / npm run build.
+node_modules/
+dist/
+
+# Variables de entorno reales. Solo .env.example va al repo.
+.env
+.env.*
+!.env.example
+
+# Capacitor (proyecto nativo generado)
+android/
+ios/
+
+# Logs y temporales
+*.log
+npm-debug.log*
+.tmp-*
+
+# Editores / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel
