@@ -24,3 +24,8 @@ Thumbs.db
 
 # Vercel
 .vercel
+
+# Boveda de Obsidian que vive dentro de la carpeta del proyecto. No es parte
+# de la app y su plugin local-rest-api guarda una API key y claves privadas
+# RSA en .obsidian/plugins/obsidian-local-rest-api/data.json.
+huebito/

@@ -22,13 +22,17 @@ function aSlug(json) {
 }
 
 // La API marca con imagen_bytes las recetas que tienen foto guardada en la
-// base. Para esas devolvemos la URL del endpoint que sirve el binario; para
-// las que vienen del seed local queda la ruta de asset, que hoy no existe en
-// disco y hace que el widget caiga en el ícono de placeholder.
+// base. Para esas devolvemos la URL del endpoint que sirve el binario.
+//
+// Para el resto devolvemos null, NO la ruta de imagen_asset: esas rutas
+// (assets/images/recetas/*.jpg) vienen del seed y no existen en disco, así que
+// apuntar a ellas era pedirle al navegador un archivo que siempre da 404 —una
+// petición perdida y un error de consola por cada receta sin foto— para acabar
+// igual en el ícono de placeholder. Con null el widget dibuja el ícono directo.
 function urlDeImagen(json) {
   const tieneBinario = (json.imagen_bytes ?? json.imagenBytes ?? null) !== null;
   if (tieneBinario && json.id != null) return `${API_BASE_URL}/recetas/${json.id}/imagen`;
-  return json.imagen_asset ?? json.imagenAsset ?? null;
+  return null;
 }
 
 export class RecetaModel {
